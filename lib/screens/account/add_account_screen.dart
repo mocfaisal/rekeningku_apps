@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import '/models/bank.dart';
 import '/utils/bank_loader.dart';
 
@@ -13,9 +14,10 @@ class AddAccountScreen extends StatefulWidget {
 
 class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _accountNumberController = TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  String? _selectedBank;
+  Bank? _selectedBank;
   List<Bank> _banks = [];
 
   @override
@@ -37,7 +39,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       appBar: AppBar(
         title: Text('Add Account for ${widget.contactName}'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -49,37 +51,67 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
           children: [
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Atas Nama'),
+              decoration: const InputDecoration(labelText: 'Atas Nama'),
             ),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'Bank'),
-              items: _banks.map((bank) {
-                return DropdownMenuItem<String>(
-                  value: bank.name,
-                  child: Text(bank.name),
-                );
-              }).toList(),
-              onChanged: (value) {
+            const SizedBox(height: 10),
+            DropdownSearch<Bank>(
+              items: _banks,
+              itemAsString: (Bank item) => item.name,
+              dropdownDecoratorProps: const DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: 'Bank',
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              popupProps: PopupProps.bottomSheet(
+                showSearchBox: true,
+                searchFieldProps: const TextFieldProps(
+                  decoration: InputDecoration(
+                    labelText: 'Cari Bank',
+                  ),
+                ),
+                fit: FlexFit.loose,
+                itemBuilder: (context, Bank item, bool isSelected) {
+                  return ListTile(
+                    title: Text(item.name),
+                  );
+                },
+                constraints: const BoxConstraints(
+                    maxHeight:
+                        250), // This limits the dropdown to show a maximum of 5 items at a time
+              ),
+              dropdownBuilder: (context, Bank? selectedItem) {
+                return Text(selectedItem?.name ?? 'Pilih Bank');
+              },
+              onChanged: (Bank? value) {
                 setState(() {
                   _selectedBank = value;
                 });
               },
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _accountNumberController,
-              decoration: InputDecoration(labelText: 'Nomor Rekening'),
+              decoration: const InputDecoration(labelText: 'Nomor Rekening'),
             ),
+            const SizedBox(height: 10),
             TextField(
               controller: _noteController,
-              decoration: InputDecoration(labelText: 'Catatan'),
+              decoration: const InputDecoration(labelText: 'Catatan'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Implement logic to add account
+                if (_selectedBank != null) {
+                  // Use _selectedBank.code and _selectedBank.name as needed
+                  print('Bank Code: ${_selectedBank!.code}');
+                  print('Bank Name: ${_selectedBank!.name}');
+                }
                 Navigator.pop(context);
               },
-              child: Text('Add Account'),
+              child: const Text('Add Account'),
             ),
           ],
         ),
