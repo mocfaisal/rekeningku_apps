@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
+import '/models/bank.dart';
+import '/utils/bank_loader.dart';
 
-class AddAccountScreen extends StatelessWidget {
+class AddAccountScreen extends StatefulWidget {
+  final String contactName;
+
+  AddAccountScreen({required this.contactName});
+
+  @override
+  _AddAccountScreenState createState() => _AddAccountScreenState();
+}
+
+class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  final List<String> _banks = ['Bank A', 'Bank B', 'Bank C'];
-  String _selectedBank = 'Bank A';
+  String? _selectedBank;
+  List<Bank> _banks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBanks();
+  }
+
+  Future<void> _loadBanks() async {
+    final banks = await loadBanks();
+    setState(() {
+      _banks = banks;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Account'),
+        title: Text('Add Account for ${widget.contactName}'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -27,23 +51,23 @@ class AddAccountScreen extends StatelessWidget {
               controller: _nameController,
               decoration: InputDecoration(labelText: 'Atas Nama'),
             ),
-            DropdownButtonFormField(
-              value: _selectedBank,
-              items: _banks.map((String bank) {
-                return DropdownMenuItem(
-                  value: bank,
-                  child: Text(bank),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(labelText: 'Bank'),
+              items: _banks.map((bank) {
+                return DropdownMenuItem<String>(
+                  value: bank.name,
+                  child: Text(bank.name),
                 );
               }).toList(),
-              onChanged: (newValue) {
-                _selectedBank = newValue!;
+              onChanged: (value) {
+                setState(() {
+                  _selectedBank = value;
+                });
               },
-              decoration: InputDecoration(labelText: 'Bank'),
             ),
             TextField(
               controller: _accountNumberController,
               decoration: InputDecoration(labelText: 'Nomor Rekening'),
-              keyboardType: TextInputType.number,
             ),
             TextField(
               controller: _noteController,
