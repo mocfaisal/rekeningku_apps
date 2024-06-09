@@ -14,8 +14,7 @@ class AddAccountScreen extends StatefulWidget {
 
 class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _accountNumberController =
-      TextEditingController();
+  final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   Bank? _selectedBank;
   List<Bank> _banks = [];
@@ -78,8 +77,8 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   );
                 },
                 constraints: const BoxConstraints(
-                    maxHeight:
-                        250), // This limits the dropdown to show a maximum of 5 items at a time
+                  maxHeight: 250,
+                ),
               ),
               dropdownBuilder: (context, Bank? selectedItem) {
                 return Text(selectedItem?.name ?? 'Pilih Bank');
@@ -103,13 +102,28 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Implement logic to add account
-                if (_selectedBank != null) {
-                  // Use _selectedBank.code and _selectedBank.name as needed
-                  print('Bank Code: ${_selectedBank!.code}');
-                  print('Bank Name: ${_selectedBank!.name}');
+                if (_nameController.text.isEmpty ||
+                    _accountNumberController.text.isEmpty ||
+                    _selectedBank == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill in all fields')),
+                  );
+                } else {
+                  // Implement logic to add account
+                  print('Name: ${_nameController.text}');
+                  print('Bank: ${_selectedBank!.name}');
+                  print('Account Number: ${_accountNumberController.text}');
+                  print('Note: ${_noteController.text}');
+                  // Navigator.pop(
+                  //   context,
+                  //   Account(
+                  //     name: _nameController.text,
+                  //     bank: _selectedBank!.name,
+                  //     accountNumber: _accountNumberController.text,
+                  //     note: _noteController.text,
+                  //   ),
+                  // );
                 }
-                Navigator.pop(context);
               },
               child: const Text('Add Account'),
             ),

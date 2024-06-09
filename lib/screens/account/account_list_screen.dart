@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/models/account.dart';
 import 'add_account_screen.dart';
 
 class AccountListScreen extends StatefulWidget {
@@ -11,13 +12,13 @@ class AccountListScreen extends StatefulWidget {
 }
 
 class _AccountListScreenState extends State<AccountListScreen> {
-  final List<Map<String, String>> accounts = [
-    {
-      "name": "John Doe",
-      "bank": "Bank Central Asia",
-      "accountNumber": "1234567890",
-      "note": "Primary account"
-    },
+  final List<Account> accounts = [
+    Account(
+      name: "John Doe",
+      bank: "Bank Central Asia",
+      accountNumber: "1234567890",
+      note: "Primary account",
+    ),
     // Add more dummy accounts if needed
   ];
 
@@ -30,9 +31,32 @@ class _AccountListScreenState extends State<AccountListScreen> {
   }
 
   void _deleteAccount(int index) {
-    setState(() {
-      accounts.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text('Are you sure you want to delete this account?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  accounts.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -64,9 +88,10 @@ class _AccountListScreenState extends State<AccountListScreen> {
         itemCount: accounts.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(accounts[index]["name"]!),
+            title: Text(accounts[index].name),
             subtitle: Text(
-                '${accounts[index]["bank"]!}\n${accounts[index]["accountNumber"]!}'),
+              '${accounts[index].bank}\n${accounts[index].accountNumber}',
+            ),
             trailing: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'Copy') {
@@ -94,7 +119,7 @@ class _AccountListScreenState extends State<AccountListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-             builder: (context) => AddAccountScreen(contactName: widget.contactName),
+              builder: (context) => AddAccountScreen(contactName: widget.contactName),
             ),
           );
         },
