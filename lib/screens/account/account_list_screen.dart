@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:clipboard/clipboard.dart';
 import 'add_account_screen.dart';
-import '/models/account.dart';
+import '/models/bank.dart';
+import '/utils/bank_loader.dart';
+import '/helpers/formatter.dart';
 
 class AccountListScreen extends StatefulWidget {
+  final String contactId;
   final String contactName;
 
-  AccountListScreen({required this.contactName});
+  AccountListScreen({required this.contactId, required this.contactName});
 
   @override
   _AccountListScreenState createState() => _AccountListScreenState();
@@ -17,11 +21,20 @@ class _AccountListScreenState extends State<AccountListScreen> {
   final CollectionReference accountsCollection =
       FirebaseFirestore.instance.collection('accounts');
   User? _user;
+  List<Bank> _banks = [];
 
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
+    _loadBanks();
+  }
+
+  Future<void> _loadBanks() async {
+    final banks = await loadBanks();
+    setState(() {
+      _banks = banks;
+    });
   }
 
   void _deleteAccount(String id, String name, String bank) {
@@ -50,21 +63,39 @@ class _AccountListScreenState extends State<AccountListScreen> {
     );
   }
 
-  void _editAccount(
-      String id, String name, String bank, String accountNumber, String note) {
+  void _editAccount(String id, String name, String bankCode,
+      String accountNumber, String note) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddAccountScreen(
+          contactId: widget.contactId,
           contactName: widget.contactName,
           accountId: id,
           initialName: name,
-          initialBank: bank,
+          initialBankCode: bankCode,
           initialAccountNumber: accountNumber,
           initialNote: note,
         ),
       ),
     );
+  }
+
+  String _getBankName(String bankCode) {
+    final bank = _banks.firstWhere((bank) => bank.code == bankCode,
+        orElse: () => Bank(name: 'Unknown', code: bankCode));
+    return bank.name;
+  }
+
+  void _copyAccount(String name, String bank, String accountNumber) {
+    final formattedAccountNumber = formatAccountNumber(bank, accountNumber);
+    ;
+    // final formattedAccountNumber = accountNumber;
+    final data = '$bank\n$name\n$formattedAccountNumber';
+    FlutterClipboard.copy(data).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Account details copied to clipboard')));
+    });
   }
 
   @override
@@ -106,25 +137,35 @@ class _AccountListScreenState extends State<AccountListScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: accountsCollection
             .where('userId', isEqualTo: _user!.uid)
+            .where('contactId', isEqualTo: widget.contactId)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
 
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No accounts found for this contact.'));
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error.toString()}'));
+          }
+
           final accounts = snapshot.data!.docs.map((doc) {
+            final bankName = _getBankName(doc['bankCode']);
             return ListTile(
               title: Text(doc['name']),
-              subtitle: Text('${doc['bank']}\n${doc['accountNumber']}'),
+              subtitle: Text('${bankName}\n${doc['accountNumber']}'),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'Copy') {
-                    // Implement copy logic
+                    _copyAccount(doc['name'], bankName, doc['accountNumber']);
                   } else if (value == 'Edit') {
-                    _editAccount(doc.id, doc['name'], doc['bank'],
+                    _editAccount(doc.id, doc['name'], doc['bankCode'],
                         doc['accountNumber'], doc['note']);
                   } else if (value == 'Delete') {
-                    _deleteAccount(doc.id, doc['name'], doc['bank']);
+                    _deleteAccount(doc.id, doc['name'], bankName);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -147,8 +188,8 @@ class _AccountListScreenState extends State<AccountListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  AddAccountScreen(contactName: widget.contactName),
+              builder: (context) => AddAccountScreen(
+                  contactId: widget.contactId, contactName: widget.contactName),
             ),
           );
         },

@@ -1,19 +1,23 @@
-String formatAccountNumber(String bankName, String accountNumber) {
-  switch (bankName) {
-    case 'Bank Central Asia':
+String formatAccountNumber(String bankCode, String accountNumber) {
+  final String accountNumberFormatted;
+  switch (bankCode) {
+    case "014":
+    case "501":
+    case "536":
       // Implement formatting for Bank Central Asia
-      return accountNumber.replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
-    case 'Bank Mandiri':
+      accountNumberFormatted = accountNumber
+          .replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
+    case "008":
+    case "451":
+    case "564":
       // Implement formatting for Bank Mandiri
-      return accountNumber.replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
-    case 'Bank Negara Indonesia':
-      // Implement formatting for Bank Negara Indonesia
-      return accountNumber.replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
-    case 'Bank Rakyat Indonesia':
-      // Implement formatting for Bank Rakyat Indonesia
-      return accountNumber.replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
+      accountNumberFormatted = accountNumber
+          .replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
     default:
       // Default formatting, no changes
-      return accountNumber;
+      accountNumberFormatted = accountNumber
+          .replaceAllMapped(RegExp(r".{4}"), (match) => "${match.group(0)} ");
+
   }
+  return accountNumberFormatted.trimRight();;
 }

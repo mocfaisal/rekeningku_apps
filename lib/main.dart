@@ -42,8 +42,10 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => HomeScreen(selectedIndex: 1),
         '/contacts': (context) => HomeScreen(selectedIndex: 0),
         '/add-contact': (context) => AddContactScreen(),
-        '/add-account': (context) => AddAccountScreen(contactName: ''),
-        '/account-list': (context) => AccountListScreen(contactName: ''),
+        '/add-account': (context) =>
+            AddAccountScreen(contactId: '', contactName: ''),
+        '/account-list': (context) =>
+            AccountListScreen(contactId: '', contactName: ''),
       },
     );
   }

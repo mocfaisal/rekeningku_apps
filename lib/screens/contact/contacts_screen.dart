@@ -11,22 +11,19 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
+  final User? _user = FirebaseAuth.instance.currentUser;
   final CollectionReference contactsCollection =
       FirebaseFirestore.instance.collection('contacts');
-  User? _user;
+  final CollectionReference accountsCollection =
+      FirebaseFirestore.instance.collection('accounts');
 
-  @override
-  void initState() {
-    super.initState();
-    _user = FirebaseAuth.instance.currentUser;
-  }
-
-  void _deleteContact(String id, String name) {
+  void _deleteContact(String contactId, String contactName) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Confirm Delete'),
-        content: Text('Are you sure you want to delete ${name} contact?'),
+        content:
+            Text('Are you sure you want to delete ${contactName} contact?\n All data account will be deleted'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -35,9 +32,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await contactsCollection.doc(id).delete();
+              await contactsCollection.doc(contactId).delete();
+              await accountsCollection
+                  .where('contactId', isEqualTo: contactId)
+                  .get()
+                  .then((querySnapshot) {
+                for (var doc in querySnapshot.docs) {
+                  doc.reference.delete();
+                }
+              });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('${name} Contact deleted successfully')));
+                  content: Text(
+                      'Contact and related accounts deleted successfully')));
             },
             child: Text('Delete'),
           ),
@@ -46,12 +52,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
     );
   }
 
-  void _editContact(String id, String name, String note) {
+  void _editContact(String contactId, String name, String note) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AddContactScreen(
-          contactId: id,
+          contactId: contactId,
           initialName: name,
           initialNote: note,
         ),
@@ -105,7 +111,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          AccountListScreen(contactName: contact.name),
+                          AccountListScreen(contactId: contact.id, contactName: contact.name),
                     ),
                   );
                 },
