@@ -18,6 +18,9 @@ class RegisterScreen extends StatelessWidget {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      await userCredential.user?.updateDisplayName(_nameController.text.trim());
+
       // Registration successful, navigate to login screen
       print("User Created Success");
       Navigator.pushReplacementNamed(context, '/login');

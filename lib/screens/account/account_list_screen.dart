@@ -1,25 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/models/account.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'add_account_screen.dart';
+import '/models/account.dart';
 
-class AccountListScreen extends StatelessWidget {
+class AccountListScreen extends StatefulWidget {
   final String contactName;
 
   AccountListScreen({required this.contactName});
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  @override
+  _AccountListScreenState createState() => _AccountListScreenState();
+}
 
-  void _deleteAccount(String id) async {
-    await _firestore.collection('accounts').doc(id).delete();
+class _AccountListScreenState extends State<AccountListScreen> {
+  final CollectionReference accountsCollection =
+      FirebaseFirestore.instance.collection('accounts');
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser;
   }
 
-  void _editAccount(String id) {
-    // Implement edit account logic
+  void _deleteAccount(String id, String name, String bank) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confirm Delete'),
+        content:
+            Text('Are you sure you want to delete ${name} - ${bank} account?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await accountsCollection.doc(id).delete();
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Account deleted successfully')));
+              Navigator.pop(context);
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editAccount(
+      String id, String name, String bank, String accountNumber, String note) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddAccountScreen(
+          contactName: widget.contactName,
+          accountId: id,
+          initialName: name,
+          initialBank: bank,
+          initialAccountNumber: accountNumber,
+          initialNote: note,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Accounts'),
+        ),
+        body: Center(
+          child: Text('No user is logged in.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -31,7 +91,7 @@ class AccountListScreen extends StatelessWidget {
               style: TextStyle(color: Colors.black, fontSize: 16.0),
             ),
             Text(
-              contactName,
+              widget.contactName,
               style: TextStyle(color: Colors.black, fontSize: 12.0),
             ),
           ],
@@ -44,8 +104,8 @@ class AccountListScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('accounts')
-            .where('contactName', isEqualTo: contactName)
+        stream: accountsCollection
+            .where('userId', isEqualTo: _user!.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -61,9 +121,10 @@ class AccountListScreen extends StatelessWidget {
                   if (value == 'Copy') {
                     // Implement copy logic
                   } else if (value == 'Edit') {
-                    _editAccount(doc.id);
+                    _editAccount(doc.id, doc['name'], doc['bank'],
+                        doc['accountNumber'], doc['note']);
                   } else if (value == 'Delete') {
-                    _deleteAccount(doc.id);
+                    _deleteAccount(doc.id, doc['name'], doc['bank']);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -86,7 +147,8 @@ class AccountListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddAccountScreen(contactName: contactName),
+              builder: (context) =>
+                  AddAccountScreen(contactName: widget.contactName),
             ),
           );
         },
