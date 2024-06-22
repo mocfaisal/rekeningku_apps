@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddContactScreen extends StatelessWidget {
+class AddContactScreen extends StatefulWidget {
+  @override
+  _AddContactScreenState createState() => _AddContactScreenState();
+}
+
+class _AddContactScreenState extends State<AddContactScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _addContact(BuildContext context) {
+  void _addContact() async {
     final String name = _nameController.text.trim();
     final String note = _noteController.text.trim();
 
@@ -15,12 +22,12 @@ class AddContactScreen extends StatelessWidget {
       return;
     }
 
-    // Implement logic to add contact, e.g., save to a database or state management solution
-
-    Navigator.pop(context, {
+    await _firestore.collection('contacts').add({
       'name': name,
       'note': note,
     });
+
+    Navigator.pop(context);
   }
 
   @override
@@ -49,7 +56,7 @@ class AddContactScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _addContact(context),
+              onPressed: _addContact,
               child: Text('Add Contact'),
             ),
           ],

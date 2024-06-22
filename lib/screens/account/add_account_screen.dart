@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import '/models/bank.dart';
 import '/utils/bank_loader.dart';
@@ -16,6 +17,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _accountNumberController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Bank? _selectedBank;
   List<Bank> _banks = [];
 
@@ -30,6 +32,29 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     setState(() {
       _banks = banks;
     });
+  }
+
+  void _addAccount() async {
+    final String name = _nameController.text.trim();
+    final String accountNumber = _accountNumberController.text.trim();
+    final String note = _noteController.text.trim();
+
+    if (_selectedBank == null || name.isEmpty || accountNumber.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill all fields')),
+      );
+      return;
+    }
+
+    await _firestore.collection('accounts').add({
+      'contactName': widget.contactName,
+      'name': name,
+      'bank': _selectedBank!.name,
+      'accountNumber': accountNumber,
+      'note': note,
+    });
+
+    Navigator.pop(context);
   }
 
   @override
@@ -101,30 +126,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                if (_nameController.text.isEmpty ||
-                    _accountNumberController.text.isEmpty ||
-                    _selectedBank == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill in all fields')),
-                  );
-                } else {
-                  // Implement logic to add account
-                  print('Name: ${_nameController.text}');
-                  print('Bank: ${_selectedBank!.name}');
-                  print('Account Number: ${_accountNumberController.text}');
-                  print('Note: ${_noteController.text}');
-                  // Navigator.pop(
-                  //   context,
-                  //   Account(
-                  //     name: _nameController.text,
-                  //     bank: _selectedBank!.name,
-                  //     accountNumber: _accountNumberController.text,
-                  //     note: _noteController.text,
-                  //   ),
-                  // );
-                }
-              },
+              onPressed: _addAccount,
               child: const Text('Add Account'),
             ),
           ],

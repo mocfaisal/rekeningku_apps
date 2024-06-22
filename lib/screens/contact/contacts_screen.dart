@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '/models/contact.dart';
 import 'add_contact_screen.dart';
 import '/screens/account/account_list_screen.dart';
@@ -9,41 +10,13 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  final List<Contact> contacts = [
-    Contact(name: 'John Doe', note: 'Friend from college'),
-    Contact(name: 'Jane Smith', note: 'Work colleague'),
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  void _deleteContact(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Delete Contact'),
-          content: Text('Are you sure you want to delete this contact?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  contacts.removeAt(index);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+  void _deleteContact(String id) async {
+    await _firestore.collection('contacts').doc(id).delete();
   }
 
-  void _editContact(int index) {
+  void _editContact(String id) {
     // Implement edit contact logic
   }
 
@@ -53,38 +26,46 @@ class _ContactsScreenState extends State<ContactsScreen> {
       appBar: AppBar(
         title: Text('Contacts'),
       ),
-      body: ListView.builder(
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(contacts[index].name),
-            subtitle: Text(contacts[index].note),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AccountListScreen(contactName: contacts[index].name),
-                ),
-              );
-            },
-            trailing: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'Edit') {
-                  _editContact(index);
-                } else if (value == 'Delete') {
-                  _deleteContact(index);
-                }
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('contacts').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final contacts = snapshot.data!.docs.map((doc) {
+            return ListTile(
+              title: Text(doc['name']),
+              subtitle: Text(doc['note']),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AccountListScreen(contactName: doc['name']),
+                  ),
+                );
               },
-              itemBuilder: (BuildContext context) {
-                return {'Edit', 'Delete'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
-          );
+              trailing: PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'Edit') {
+                    _editContact(doc.id);
+                  } else if (value == 'Delete') {
+                    _deleteContact(doc.id);
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'Edit', 'Delete'}.map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
+            );
+          }).toList();
+
+          return ListView(children: contacts);
         },
       ),
       floatingActionButton: FloatingActionButton(

@@ -1,62 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '/models/account.dart';
 import 'add_account_screen.dart';
 
-class AccountListScreen extends StatefulWidget {
+class AccountListScreen extends StatelessWidget {
   final String contactName;
 
   AccountListScreen({required this.contactName});
 
-  @override
-  _AccountListScreenState createState() => _AccountListScreenState();
-}
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class _AccountListScreenState extends State<AccountListScreen> {
-  final List<Account> accounts = [
-    Account(
-      name: "John Doe",
-      bank: "Bank Central Asia",
-      accountNumber: "1234567890",
-      note: "Primary account",
-    ),
-    // Add more dummy accounts if needed
-  ];
-
-  void _copyAccount(int index) {
-    // Implement copy logic
+  void _deleteAccount(String id) async {
+    await _firestore.collection('accounts').doc(id).delete();
   }
 
-  void _editAccount(int index) {
-    // Implement edit logic
-  }
-
-  void _deleteAccount(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Delete Account'),
-          content: Text('Are you sure you want to delete this account?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  accounts.removeAt(index);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
+  void _editAccount(String id) {
+    // Implement edit account logic
   }
 
   @override
@@ -72,7 +31,7 @@ class _AccountListScreenState extends State<AccountListScreen> {
               style: TextStyle(color: Colors.black, fontSize: 16.0),
             ),
             Text(
-              widget.contactName,
+              contactName,
               style: TextStyle(color: Colors.black, fontSize: 12.0),
             ),
           ],
@@ -84,34 +43,42 @@ class _AccountListScreenState extends State<AccountListScreen> {
           },
         ),
       ),
-      body: ListView.builder(
-        itemCount: accounts.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(accounts[index].name),
-            subtitle: Text(
-              '${accounts[index].bank}\n${accounts[index].accountNumber}',
-            ),
-            trailing: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'Copy') {
-                  _copyAccount(index);
-                } else if (value == 'Edit') {
-                  _editAccount(index);
-                } else if (value == 'Delete') {
-                  _deleteAccount(index);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return {'Copy', 'Edit', 'Delete'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
-                  );
-                }).toList();
-              },
-            ),
-          );
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('accounts')
+            .where('contactName', isEqualTo: contactName)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final accounts = snapshot.data!.docs.map((doc) {
+            return ListTile(
+              title: Text(doc['name']),
+              subtitle: Text('${doc['bank']}\n${doc['accountNumber']}'),
+              trailing: PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'Copy') {
+                    // Implement copy logic
+                  } else if (value == 'Edit') {
+                    _editAccount(doc.id);
+                  } else if (value == 'Delete') {
+                    _deleteAccount(doc.id);
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return {'Copy', 'Edit', 'Delete'}.map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
+            );
+          }).toList();
+
+          return ListView(children: accounts);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -119,7 +86,7 @@ class _AccountListScreenState extends State<AccountListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddAccountScreen(contactName: widget.contactName),
+              builder: (context) => AddAccountScreen(contactName: contactName),
             ),
           );
         },
