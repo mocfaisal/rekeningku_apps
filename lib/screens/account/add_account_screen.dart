@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '/models/bank.dart';
@@ -35,6 +34,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController _noteController = TextEditingController();
   Bank? _selectedBank;
   List<Bank> _banks = [];
+  List<Bank> _filteredBanks = [];
   User? _user;
   bool _isLoading = false;
 
@@ -49,6 +49,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     final banks = await loadBanks();
     setState(() {
       _banks = banks;
+      _filteredBanks = banks;
       _initializeFields();
     });
   }
@@ -60,18 +61,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       _noteController.text = widget.initialNote ?? '';
       _selectedBank = _getBankByCode(widget.initialBankCode ?? '');
     }
-    if (_selectedBank != null) {
-      print(_selectedBank!.name);
-    }
-    print(widget.initialBankCode);
   }
 
   Bank _getBankByCode(String bankCode) {
-    final bank = _banks.firstWhere(
+    return _banks.firstWhere(
       (bank) => bank.code == bankCode,
       orElse: () => Bank(name: 'Unknown', code: bankCode),
     );
-    return bank;
   }
 
   Future<void> _saveAccount() async {
@@ -132,6 +128,72 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     }
   }
 
+  Future<void> _selectBank(BuildContext context) async {
+    final Bank? selectedBank = await showModalBottomSheet<Bank>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Container(
+              height: 400,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Search Bank',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setModalState(() {
+                          _filteredBanks = _banks
+                              .where((bank) => bank.name
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _filteredBanks.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index < 0 || index >= _filteredBanks.length) {
+                          return null;
+                        }
+                        final bank = _filteredBanks[index];
+                        return ListTile(
+                          title: Text(bank.name),
+                          onTap: () {
+                            Navigator.pop(context, bank);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (selectedBank != null) {
+      setState(() {
+        _selectedBank = selectedBank;
+        _filteredBanks = _banks;
+      });
+    }
+    // Reset filtered banks back to original list when modal is dismissed
+    setState(() {
+      _filteredBanks = _banks;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,49 +223,16 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                       decoration: const InputDecoration(labelText: 'Atas Nama'),
                     ),
                     const SizedBox(height: 10),
-                    DropdownSearch<Bank>(
-                      items: _banks,
-                      itemAsString: (Bank item) => item.name,
-                      dropdownDecoratorProps: const DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
+                    InkWell(
+                      onTap: () => _selectBank(context),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
                           labelText: 'Bank',
                           contentPadding: EdgeInsets.symmetric(horizontal: 12),
                           border: OutlineInputBorder(),
                         ),
+                        child: Text(_selectedBank?.name ?? 'Pilih Bank'),
                       ),
-                      popupProps: PopupProps.bottomSheet(
-                        showSearchBox: true,
-                        isFilterOnline: false,
-                        searchFieldProps: const TextFieldProps(
-                          decoration: InputDecoration(
-                            labelText: 'Cari Bank',
-                          ),
-                        ),
-                        fit: FlexFit.loose,
-                        itemBuilder: (context, Bank item, bool isSelected) {
-                          return ListTile(
-                            title: Text(item.name),
-                          );
-                        },
-                        constraints: const BoxConstraints(
-                          maxHeight: 250,
-                        ),
-                        onDismissed: () {
-                          setState(() {
-                            // Close the dropdown when clicked outside
-                            print('Dismissed');
-                          });
-                        },
-                      ),
-                      dropdownBuilder: (context, Bank? selectedItem) {
-                        return Text(selectedItem?.name ?? 'Pilih Bank');
-                      },
-                      onChanged: (Bank? value) {
-                        setState(() {
-                          _selectedBank = value;
-                        });
-                      },
-                      selectedItem: _selectedBank,
                     ),
                     const SizedBox(height: 10),
                     TextField(
@@ -217,11 +246,27 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                       decoration: const InputDecoration(labelText: 'Catatan'),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _saveAccount,
-                      child: Text(widget.accountId == null
-                          ? 'Add Account'
-                          : 'Save Changes'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: _saveAccount,
+                          child: Text(widget.accountId == null
+                              ? 'Add Account'
+                              : 'Save Changes'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

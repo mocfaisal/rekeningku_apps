@@ -156,7 +156,8 @@ class _AccountListScreenState extends State<AccountListScreen> {
             final bankName = _getBankName(doc['bankCode']);
             return ListTile(
               title: Text(doc['name']),
-              subtitle: Text('${bankName}\n${doc['accountNumber']}'),
+              subtitle:
+                  Text('${bankName}\n${doc['accountNumber']}\n${doc['note']}'),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'Copy') {

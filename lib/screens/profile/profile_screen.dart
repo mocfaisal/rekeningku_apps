@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
+  Future<void> _logout(context) async {
+    await FirebaseAuth.instance.signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     final User? user = FirebaseAuth.instance.currentUser;
@@ -21,6 +29,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -66,10 +75,7 @@ class ProfileScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                       ),
-                      onPressed: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
+                      onPressed: () async => _logout(context),
                       child: const Text('Logout'),
                     ),
                     const SizedBox(height: 20),

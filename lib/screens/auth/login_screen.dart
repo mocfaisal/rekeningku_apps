@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -7,11 +8,18 @@ class LoginScreen extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> _login(BuildContext context) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
     try {
+      String emailTxt = _emailController.text.trim();
+      String passTxt = _passwordController.text.trim();
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        email: emailTxt,
+        password: passTxt,
       );
+
+      // Set Session
+      await prefs.setBool('isLoggedIn', true);
+
       // Login successful, navigate to contacts screen
       Navigator.pushReplacementNamed(context, '/contacts');
     } on FirebaseAuthException catch (e) {
