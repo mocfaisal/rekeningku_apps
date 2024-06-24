@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> _login(BuildContext context) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      String emailTxt = _emailController.text.trim();
+      String passTxt = _passwordController.text.trim();
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailTxt,
+        password: passTxt,
+      );
+
+      // Set Session
+      await prefs.setBool('isLoggedIn', true);
+
+      // Login successful, navigate to contacts screen
+      Navigator.pushReplacementNamed(context, '/contacts');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No user found for that email.')),
+        );
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Wrong password provided.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to sign in: ${e.message}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +82,7 @@ class LoginScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() == true) {
-                    // Implement login logic
-                    Navigator.pushReplacementNamed(context, '/contacts');
+                    _login(context);
                   }
                 },
                 child: Text('Login'),

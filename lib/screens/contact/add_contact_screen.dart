@@ -1,38 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddContactScreen extends StatelessWidget {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
+  final String? contactId;
+  final String? initialName;
+  final String? initialNote;
+  final TextEditingController _nameController;
+  final TextEditingController _noteController;
 
-  void _addContact(BuildContext context) {
-    final String name = _nameController.text.trim();
-    final String note = _noteController.text.trim();
+  AddContactScreen({this.contactId, this.initialName, this.initialNote})
+      : _nameController = TextEditingController(text: initialName),
+        _noteController = TextEditingController(text: initialNote);
 
-    if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Name cannot be empty')),
-      );
+  Future<void> _saveContact(BuildContext context) async {
+    final name = _nameController.text.trim();
+    final note = _noteController.text.trim();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('No user is logged in')));
       return;
     }
 
-    // Implement logic to add contact, e.g., save to a database or state management solution
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Name is required')));
+      return;
+    }
 
-    Navigator.pop(context, {
-      'name': name,
-      'note': note,
-    });
+    try {
+      if (contactId == null) {
+        await FirebaseFirestore.instance.collection('contacts').add({
+          'name': name,
+          'note': note,
+          'userId': user.uid,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Contact added successfully')));
+      } else {
+        await FirebaseFirestore.instance
+            .collection('contacts')
+            .doc(contactId)
+            .update({
+          'name': name,
+          'note': note,
+          'userId': user.uid,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Contact updated successfully')));
+      }
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to save contact: $e')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Contact'),
+        title: Text(contactId == null ? 'Add Contact' : 'Edit Contact'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -49,8 +82,8 @@ class AddContactScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _addContact(context),
-              child: Text('Add Contact'),
+              onPressed: () => _saveContact(context),
+              child: Text(contactId == null ? 'Add Contact' : 'Save Changes'),
             ),
           ],
         ),

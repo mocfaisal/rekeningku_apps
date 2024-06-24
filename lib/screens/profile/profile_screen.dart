@@ -1,27 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
-   final String? name;
-   final String? email;
-
-  const ProfileScreen({Key? key, required this.name, required this.email}) : super(key: key);
+  Future<void> _logout(context) async {
+    await FirebaseAuth.instance.signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    // print(user);
+
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Profile'),
+        ),
+        body: Center(
+          child: Text('No user is logged in.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/profile_avatar.png'), // Replace with your avatar asset
+              backgroundImage: AssetImage(
+                  'profile_avatar.png'), // Replace with your avatar asset
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Card(
               elevation: 3,
               child: Padding(
@@ -30,42 +50,42 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextField(
-                      controller: TextEditingController(text: name),
+                      controller: TextEditingController(text: user.displayName),
                       readOnly: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Nama Pengguna',
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
-                      controller: TextEditingController(text: email),
+                      controller: TextEditingController(text: user.email),
                       readOnly: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red, // Correct argument for color
+                        backgroundColor:
+                            Colors.red, // Correct argument for color
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                       ),
-                      onPressed: () {
-                        // Implement logout logic
-                        Navigator.of(context).pushReplacementNamed('/login');
-                      },
-                      child: Text('Logout'),
+                      onPressed: () async => _logout(context),
+                      child: const Text('Logout'),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
                         // Implement navigation to change password screen
-                        Navigator.of(context).pushNamed('/change-password');
+                        Navigator.pushReplacementNamed(
+                            context, '/change-password');
                       },
-                      child: Text(
+                      child: const Text(
                         'Ubah Password',
                         style: TextStyle(
                           fontSize: 16,

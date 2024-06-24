@@ -6,6 +6,7 @@ class ChangePasswordScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Change Password'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,11 +37,27 @@ class ChangePasswordScreen extends StatelessWidget {
               obscureText: true,
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Handle change password logic
-              },
-              child: Text('Change Password'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/profile');
+                  },
+                  child: Text('Cancel'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle change password logic
+                  },
+                  child: Text('Change Password'),
+                ),
+              ],
             ),
           ],
         ),

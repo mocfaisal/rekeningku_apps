@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "972712325260",
+    "firebase_url": "https://rekeningku-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "rekeningku-36cac",
+    "storage_bucket": "rekeningku-36cac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972712325260:android:e18fc058e44fad5a47cba9",
+        "android_client_info": {
+          "package_name": "com.example.rekeningkuapps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7d_N_Gn0fLMvfB7oc9tfn5Grok5ZlyA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

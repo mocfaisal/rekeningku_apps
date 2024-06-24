@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> _resetPassword(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset email sent.')),
+      );
+      Navigator.pushReplacementNamed(context, '/login');
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.message}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +51,22 @@ class ForgotPasswordScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState?.validate() == true) {
-                    // Handle forgot password logic and validate email from database
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Reset password link has been sent to your email')),
-                    );
+                    // // Handle forgot password logic and validate email from database
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   SnackBar(
+                    //       content: Text(
+                    //           'Reset password link has been sent to your email')),
+                    // );
+                    _resetPassword(context);
                   }
                 },
                 child: Text('Reset Password'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+                child: Text('Back to Login'),
               ),
             ],
           ),

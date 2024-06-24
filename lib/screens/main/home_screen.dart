@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return ContactsScreen();
       case 1:
-        return ProfileScreen(name: 'Nama Pengguna', email: 'user@example.com');
+        return ProfileScreen();
       default:
         return Container();
     }

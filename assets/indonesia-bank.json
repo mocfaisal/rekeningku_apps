@@ -1,150 +1,426 @@
 [
     {
-        "name": "PT. BANK CIMB NIAGA - (CIMB)",
-        "code": "022"
+        "code": "002",
+        "name": "Bank BRI"
     },
     {
-        "name": "PT. BANK CIMB NIAGA UNIT USAHA SYARIAH - (CIMB SYARIAH)",
-        "code": "730"
+        "code": "008",
+        "name": "Bank Mandiri"
     },
     {
-        "name": "PT. BNI SYARIAH",
-        "code": "427"
+        "code": "009",
+        "name": "Bank BNI"
     },
     {
-        "name": "PT. BANK BCA SYARIAH",
-        "code": "536"
+        "code": "011",
+        "name": "Bank Danamon"
     },
     {
-        "name": "PT. BANK BUKOPIN",
-        "code": "441"
+        "code": "013",
+        "name": "Bank Permata"
     },
     {
-        "name": "PT. BANK CENTRAL ASIA, TBK - (BCA)",
-        "code": "014"
+        "code": "014",
+        "name": "Bank BCA"
     },
     {
-        "name": "PT. BANK DANAMON INDONESIA",
-        "code": "011"
+        "code": "016",
+        "name": "Bank Maybank (Bii)"
     },
     {
-        "name": "PT. BANK DKI",
-        "code": "111"
+        "code": "019",
+        "name": "Bank Panin"
     },
     {
-        "name": "PT. BANK DBS INDONESIA",
-        "code": "046"
+        "code": "020",
+        "name": "Bank Arta Niaga Kencana"
     },
     {
-        "name": "PT. BANK HSBC INDONESIA",
-        "code": "087"
+        "code": "022",
+        "name": "Bank CIMB Niaga"
     },
     {
-        "name": "PT. BANK MANDIRI (PERSERO), TBK",
-        "code": "008"
+        "code": "023",
+        "name": "Bank UoB Indonesia"
     },
     {
-        "name": "PT. BANK MANDIRI TASPEN POS",
-        "code": "564"
+        "code": "026",
+        "name": "Bank Lippo"
     },
     {
-        "name": "PT. BANK MAYBANK INDONESIA, TBK",
-        "code": "016"
+        "code": "028",
+        "name": "Bank OCBC NISP"
     },
     {
-        "name": "PT. BANK MAYORA",
-        "code": "553"
+        "code": "030",
+        "name": "American Express Bank Ltd"
     },
     {
-        "name": "PT. BANK MEGA, TBK",
-        "code": "426"
+        "code": "031",
+        "name": "Citibank"
     },
     {
-        "name": "PT. BANK MUAMALAT INDONESIA, TBK",
-        "code": "147"
+        "code": "037",
+        "name": "Bank Artha Graha Internasional "
     },
     {
-        "name": "PT. BANK NEGARA INDONESIA (PERSERO), TBK (BNI)",
-        "code": "009"
+        "code": "042",
+        "name": "MUFG Bank"
     },
     {
-        "name": "PT. BANK OCBC NISP, TBK",
-        "code": "028"
+        "code": "045",
+        "name": "Bank Sumitomo Mitsui Indonesia"
     },
     {
-        "name": "PT. BANK OCBC NISP, TBK UNIT USAHA SYARIAH",
-        "code": "731"
+        "code": "046",
+        "name": "Bank DBS Indonesia"
     },
     {
-        "name": "PT. BANK PERMATA, TBK",
-        "code": "013"
+        "code": "048",
+        "name": "Bank Mizuho Indonesia"
     },
     {
-        "name": "PT. BANK PERMATA, TBK UNIT USAHA SYARIAH",
-        "code": "721"
+        "code": "050",
+        "name": "Standard Chartered Bank"
     },
     {
-        "name": "PT. BANK RAKYAT INDONESIA (PERSERO), TBK (BRI)",
-        "code": "002"
+        "code": "059",
+        "name": "Korea Exchange Bank Danamon"
     },
     {
-        "name": "PT. BANK RAKYAT INDONESIA AGRONIAGA, TBK",
-        "code": "494"
+        "code": "060",
+        "name": "Rabobank Internasional Indonesia"
     },
     {
-        "name": "PT. BANK SYARIAH BRI - (BRI SYARIAH)",
-        "code": "422"
+        "code": "061",
+        "name": "Bank ANZ Indonesia"
     },
     {
-        "name": "PT. BANK SYARIAH BUKOPIN",
-        "code": "521"
+        "code": "076",
+        "name": "Bank Bumi Arta"
     },
     {
-        "name": "PT. BANK SYARIAH MANDIRI",
-        "code": "451"
+        "code": "087",
+        "name": "Bank HSBC Indonesia"
     },
     {
-        "name": "PT. BANK TABUNGAN NEGARA (PERSERO), TBK (BTN)",
-        "code": "200"
+        "code": "088",
+        "name": "Bank Antardaerah"
     },
     {
-        "name": "PT. BANK TABUNGAN NEGARA (PERSERO), TBK UNIT USAHA SYARIAH",
-        "code": "723"
+        "code": "089",
+        "name": "Bank Haga "
     },
     {
-        "name": "PT. BANK TABUNGAN PENSIUNAN NASIONAL - (BTPN)",
-        "code": "213"
+        "code": "095",
+        "name": "J Trust Bank Indonesia"
     },
     {
-        "name": "PT. BANK TABUNGAN PENSIUNAN NASIONAL SYARIAH - (BTPN Syariah)",
-        "code": "547"
+        "code": "097",
+        "name": "Bank Mayapada"
     },
     {
-        "name": "PT. BANK WOORI SAUDARA INDONESIA 1906, TBK (BWS)",
-        "code": "212"
+        "code": "110",
+        "name": "Bank Jabar bjb"
     },
     {
-        "name": "PT. BANK JABAR BANTEN SYARIAH",
-        "code": "425"
+        "code": "111",
+        "name": "Bank DKI Jakarta"
     },
     {
-        "name": "PT. BANK PEMBANGUNAN DAERAH BANTEN",
-        "code": "137"
+        "code": "112",
+        "name": "BPD DIY"
     },
     {
-        "name": "PT. BANK CAPITAL INDONESIA",
-        "code": "054"
+        "code": "113",
+        "name": "Bank Jateng"
     },
     {
-        "name": "PT. BANK DKI UNIT USAHA SYARIAH",
-        "code": "724"
+        "code": "114",
+        "name": "Bank Jatim"
     },
     {
-        "name": "PT. BANK ICBC INDONESIA",
-        "code": "164"
+        "code": "115",
+        "name": "Bank Jambi"
     },
     {
-        "name": "PT. BANK JTRUST INDONESIA, TBK",
-        "code": "095"
+        "code": "116",
+        "name": "Bank Aceh"
+    },
+    {
+        "code": "117",
+        "name": "Bank Sumut"
+    },
+    {
+        "code": "118",
+        "name": "Bank Nagari (Bank Sumbar)"
+    },
+    {
+        "code": "119",
+        "name": "Bank Riau Kepri"
+    },
+    {
+        "code": "120",
+        "name": "Bank Sumsel Babel (Sumatera Selatan Bangka Belitung)"
+    },
+    {
+        "code": "121",
+        "name": "Bank Lampung"
+    },
+    {
+        "code": "122",
+        "name": "Bank Kalsel"
+    },
+    {
+        "code": "123",
+        "name": "Bank Kalbar"
+    },
+    {
+        "code": "124",
+        "name": "Bank Kaltimtara (Bank Kalimantan Timur dan Utara)"
+    },
+    {
+        "code": "125",
+        "name": "Bank Kalteng"
+    },
+    {
+        "code": "126",
+        "name": "Bank Sulselbar (Bank Sulawesi Selatan dan Barat)"
+    },
+    {
+        "code": "127",
+        "name": "Bank Sulutgo (Bank Sulawesi Utara dan Gorontalo)"
+    },
+    {
+        "code": "128",
+        "name": "Bank NTB"
+    },
+    {
+        "code": "129",
+        "name": "Bank BPD Bali"
+    },
+    {
+        "code": "130",
+        "name": "Bank NTT"
+    },
+    {
+        "code": "131",
+        "name": "Bank Maluku"
+    },
+    {
+        "code": "132",
+        "name": "Bank Papua"
+    },
+    {
+        "code": "133",
+        "name": "Bank Bengkulu"
+    },
+    {
+        "code": "134",
+        "name": "Bank Sulteng"
+    },
+    {
+        "code": "135",
+        "name": "Bank Sultra"
+    },
+    {
+        "code": "137",
+        "name": "Bank Banten"
+    },
+    {
+        "code": "145",
+        "name": "Bank Nusantara Parahyangan"
+    },
+    {
+        "code": "147",
+        "name": "Bank Muamalat"
+    },
+    {
+        "code": "153",
+        "name": "Bank Sinarmas"
+    },
+    {
+        "code": "157",
+        "name": "Bank Maspion Indonesia"
+    },
+    {
+        "code": "159",
+        "name": "Bank Hagakita"
+    },
+    {
+        "code": "161",
+        "name": "Bank Ganesha"
+    },
+    {
+        "code": "162",
+        "name": "Bank Windu Kentjana"
+    },
+    {
+        "code": "164",
+        "name": "Bank ICBC Indonesia (Halim Indonesia Bank)"
+    },
+    {
+        "code": "166",
+        "name": "Bank Harmoni International"
+    },
+    {
+        "code": "167",
+        "name": "Bank QNB Indonesia"
+    },
+    {
+        "code": "200",
+        "name": "Bank BTN"
+    },
+    {
+        "code": "212",
+        "name": "Bank Woori Saudara"
+    },
+    {
+        "code": "213",
+        "name": "Bank BTPN"
+    },
+    {
+        "code": "405",
+        "name": "Bank Victoria Syariah"
+    },
+    {
+        "code": "422",
+        "name": "Bank BRI Syariah"
+    },
+    {
+        "code": "425",
+        "name": "Bank Jabar bjb Syariah"
+    },
+    {
+        "code": "426",
+        "name": "Bank Mega"
+    },
+    {
+        "code": "427",
+        "name": "Bank BNI Syariah"
+    },
+    {
+        "code": "441",
+        "name": "Bank Bukopin"
+    },
+    {
+        "code": "451",
+        "name": "Bank Syariah Mandiri"
+    },
+    {
+        "code": "484",
+        "name": "Bank Hana (Keb Hana Bank)"
+    },
+    {
+        "code": "485",
+        "name": "Bank MNC"
+    },
+    {
+        "code": "494",
+        "name": "Bank BRI Agro"
+    },
+    {
+        "code": "501",
+        "name": "Bank Digital BCA (BCA Digital)"
+    },
+    {
+        "code": "503",
+        "name": "Bank National Nobu"
+    },
+    {
+        "code": "506",
+        "name": "Bank Mega Syariah"
+    },
+    {
+        "code": "517",
+        "name": "Bank Panin Dubai Syariah"
+    },
+    {
+        "code": "520",
+        "name": "Prima Master Bank"
+    },
+    {
+        "code": "521",
+        "name": "Bank Bukopin Syariah"
+    },
+    {
+        "code": "523",
+        "name": "Bank Sahabat Sampeorna (Bank Dipo International)"
+    },
+    {
+        "code": "525",
+        "name": "Bank Akita"
+    },
+    {
+        "code": "531",
+        "name": "Anglomas Internasional Bank"
+    },
+    {
+        "code": "535",
+        "name": "Bank Kesejahteraan Ekonomi"
+    },
+    {
+        "code": "536",
+        "name": "Bank BCA Syariah"
+    },
+    {
+        "code": "542",
+        "name": "Bank Artos Indonesia"
+    },
+    {
+        "code": "547",
+        "name": "Bank BTPN Syariah"
+    },
+    {
+        "code": "548",
+        "name": "Bank Multiarta Sentosa"
+    },
+    {
+        "code": "553",
+        "name": "Bank Mayora Indonesia"
+    },
+    {
+        "code": "555",
+        "name": "Bank Index Selindo"
+    },
+    {
+        "code": "559",
+        "name": "Centratama Nasional Bank"
+    },
+    {
+        "code": "562",
+        "name": "Bank Fama Internasional"
+    },
+    {
+        "code": "564",
+        "name": "Bank Mandiri Taspen Pos"
+    },
+    {
+        "code": "566",
+        "name": "Bank Victoria International"
+    },
+    {
+        "code": "567",
+        "name": "Bank Harda Internasional"
+    },
+    {
+        "code": "911",
+        "name": "Linkaja"
+    },
+    {
+        "code": "945",
+        "name": "IBK Bank Indonesia"
+    },
+    {
+        "code": "947",
+        "name": "Bank Maybank Indocorp"
+    },
+    {
+        "code": "949",
+        "name": "Bank CTBC Indonesia (China Trust)"
+    },
+    {
+        "code": "950",
+        "name": "Bank Commonwealth"
     }
 ]
